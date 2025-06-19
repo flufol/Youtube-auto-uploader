@@ -1,7 +1,8 @@
 client_secrets.json
 youtube-oauth2.json
 downloaded_videos.jsons
-
+channels.txt
+videos.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
