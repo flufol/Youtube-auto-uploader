@@ -1,0 +1,51 @@
+client_secrets.json
+youtube-oauth2.json
+downloaded_videos.jsons
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+
+# macOS system files
+.DS_Store
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.iml
+
+# Jupyter Notebook checkpoints (if using)
+.ipynb_checkpoints/
+
+# Python distribution/build
+build/
+dist/
+*.egg-info/
+
+# Logs and local output
+*.log
+
+# Test & coverage tools
+.coverage
+.tox/
+.nox/
+pytest_cache/
+
+# MyPy and other tooling
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+
+# If you're using pipenv or poetry, include:
+# Pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
