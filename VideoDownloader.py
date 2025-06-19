@@ -12,7 +12,7 @@ class VideoDownloader():
         self.downloads_path = "downloads"
         self._check_and_make_files()
         
-        self.channels = self.get_channels()
+        self.channels = self._get_channels()
         
         
     def _check_and_make_files(self):
@@ -54,8 +54,8 @@ class VideoDownloader():
     def _add_downloaded_video(self, video_id):
         with open(self.videos_path, 'w') as file:
             file.writelines(video_id + '\n')
-    
-    
+
+
     def _get_channels_videos(self, channel_url):
         ydl_opts = {
             'quiet': True,
@@ -79,21 +79,20 @@ class VideoDownloader():
             and '/shorts/' in video['url']
         ]
         if filtered_videos:
-            print("not filltered videos")
             return filtered_videos
         else:
             print(f"{Fore.RED} All valid shorts from {channel_url} have been downloaded. \n\
             Removing this channel from options. {Fore.RESET} \n\
             {Fore.LIGHTGREEN_EX} Selecting new channel {Fore.RESET}")
 
-            self.remove_channel(channel_url)
+            self._remove_channel(channel_url)
             
             if self.channels:
-                self.channels = self.get_channels()
-                print("if channels")
+                self.channels = self._get_channels()
+                return None
             else:
                 print(f"{Fore.RED} There are no more channels to download videos from, stopping script {Fore.RESET}")
-                return
+                return None
     
 
     def download_video(self, video):
@@ -112,6 +111,6 @@ class VideoDownloader():
                 filename = ydl.prepare_filename(info)
                 video_id = info.get('id')
                 
-            self.add_downloaded_video(video_id)
+            self._add_downloaded_video(video_id)
             
             return filename
