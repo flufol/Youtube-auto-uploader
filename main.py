@@ -2,7 +2,7 @@ import random
 import os
 import re
 from video_uploader import YouTubeUploader
-from VideoDownloader import VideoDownloader
+from video_downloader import VideoDownloader
 from colorama import init, Fore
 
 init(autoreset=True)
