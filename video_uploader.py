@@ -100,6 +100,3 @@ class YouTubeUploader:
                 sleep_time = random.random() * (2 ** retry)
                 print(f"Sleeping {sleep_time:.2f} seconds and retrying...")
                 time.sleep(sleep_time)
-
-if __name__ == "__main__":
-    uploader = YouTubeUploader()

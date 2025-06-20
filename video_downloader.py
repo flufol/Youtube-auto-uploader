@@ -27,6 +27,7 @@ class VideoDownloader():
             
     
     def _get_channels(self):
+        self._check_and_make_files()
         with open(self.channels_path, 'r') as file:
             return [line.strip() for line in file if line.strip()]
     
@@ -47,6 +48,7 @@ class VideoDownloader():
 
 
     def _get_downloaded_videos(self):
+        self._check_and_make_files()
         with open(self.videos_path, 'r') as file:
             return [line.strip() for line in file if line.strip()]
 
@@ -56,7 +58,22 @@ class VideoDownloader():
             file.writelines(video_id + '\n')
 
 
-    def _get_channels_videos(self, channel_url):
+    def _handle_no_videos(self, channel_url):
+        print(f"{Fore.RED} All valid videos from {channel_url} have been downloaded. \n\
+        Removing this channel from options. {Fore.RESET} \n\
+        {Fore.LIGHTGREEN_EX} Selecting new channel {Fore.RESET}")
+
+        self._remove_channel(channel_url)
+
+        if self.channels:
+            self.channels = self._get_channels()
+            return []
+        else:
+            print(f"{Fore.RED} There are no more channels to download videos from, stopping script {Fore.RESET}")
+            return []
+
+
+    def get_channels_videos(self, channel_url):
         ydl_opts = {
             'quiet': True,
             'extract_flat': True,
@@ -64,36 +81,63 @@ class VideoDownloader():
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(channel_url, download=False)
-            return info.get('entries', [])
+            videos = info.get('entries', [])
+        videos = [
+            video for video in videos
+            if video.get('id')
+            and video.get('url')
+        ]
+        if videos:
+            return videos
+        else:
+            print(f"{Fore.RED}No videos found{Fore.RESET}")
+            return []
 
 
-    def get_filtered_videos(self, channel_url):
+    def get_channels_filtered_videos(self, channel_url):
         downloaded_videos = self._get_downloaded_videos()
-        
-        videos = self._get_channels_videos(channel_url)
+
+        videos = self.get_channels_videos(channel_url)
         filtered_videos = [
             video for video in videos
-            if video.get('id') 
-            and video.get('id') not in downloaded_videos
-            and video.get('url') 
-            and '/shorts/' in video['url']
+            if video.get('id') not in downloaded_videos
+            and not '/shorts/' in video['url']
         ]
         if filtered_videos:
             return filtered_videos
         else:
-            print(f"{Fore.RED} All valid shorts from {channel_url} have been downloaded. \n\
-            Removing this channel from options. {Fore.RESET} \n\
-            {Fore.LIGHTGREEN_EX} Selecting new channel {Fore.RESET}")
+            self._handle_no_videos(channel_url)
+            return []
 
-            self._remove_channel(channel_url)
-            
-            if self.channels:
-                self.channels = self._get_channels()
-                return None
-            else:
-                print(f"{Fore.RED} There are no more channels to download videos from, stopping script {Fore.RESET}")
-                return None
-    
+
+    def get_channels_shorts(self, channel_url):
+        videos = self.get_channels_videos(channel_url)
+        shorts = [
+            short for short in videos
+            if short.get('id')
+               and short.get('url')
+               and '/shorts/' in short['url']
+        ]
+        if shorts:
+            return shorts
+        else:
+            print(f"{Fore.RED}No shorts found{Fore.RESET}")
+            return []
+
+
+    def get_channels_filtered_shorts(self, channel_url):
+        downloaded_videos = self._get_downloaded_videos()
+
+        shorts = self.get_channels_shorts(channel_url)
+        filtered_shorts = [
+            short for short in shorts
+            if short.get('id') not in downloaded_videos
+        ]
+        if shorts:
+            return shorts
+        else:
+            self._handle_no_videos(channel_url)
+            return []
 
     def download_video(self, video):
             ydl_opts = {
@@ -114,3 +158,23 @@ class VideoDownloader():
             self._add_downloaded_video(video_id)
             
             return filename
+
+
+    def download_video_from_url(self, video_url):
+        ydl_opts = {
+            'format': 'bestvideo+bestaudio/best',
+            'merge_output_format': 'mp4',
+            'outtmpl': 'downloads/%(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegVideoConvertor',
+                'preferedformat': 'mp4',
+            }],
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=True)
+            filename = ydl.prepare_filename(info)
+            video_id = info.get('id')
+
+        self._add_downloaded_video(video_id)
+
+        return filename
