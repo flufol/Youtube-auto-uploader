@@ -54,8 +54,9 @@ class VideoDownloader():
 
 
     def _add_downloaded_video(self, video_id):
-        with open(self.videos_path, 'w') as file:
-            file.writelines(video_id + '\n')
+        with open(self.videos_path, 'a') as file:
+            file.write(video_id + '\n')
+            print(video_id)
 
 
     def _handle_no_videos(self, channel_url):
@@ -139,10 +140,12 @@ class VideoDownloader():
             self._handle_no_videos(channel_url)
             return []
 
+
     def download_video(self, video):
             ydl_opts = {
                 'format': 'bestvideo+bestaudio/best',
                 'merge_output_format': 'mp4',
+                'ffmpeg_location': '/opt/homebrew/bin/ffmpeg',
                 'outtmpl': 'downloads/%(title)s.%(ext)s',
                 'postprocessors': [{
                     'key': 'FFmpegVideoConvertor',
@@ -164,6 +167,7 @@ class VideoDownloader():
         ydl_opts = {
             'format': 'bestvideo+bestaudio/best',
             'merge_output_format': 'mp4',
+            'ffmpeg_location': '/opt/homebrew/bin/ffmpeg',
             'outtmpl': 'downloads/%(title)s.%(ext)s',
             'postprocessors': [{
                 'key': 'FFmpegVideoConvertor',

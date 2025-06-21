@@ -3,15 +3,11 @@ import os
 import re
 import sys
 import argparse
-
-from numpy.random import pareto
-
 from video_uploader import YouTubeUploader
 from video_downloader import VideoDownloader
 from colorama import init, Fore
 
 init(autoreset=True)
-
 
 def download_random_short(upload: bool = False, privacy: str = "public", delete: bool = False):
     downloader = VideoDownloader()
@@ -21,7 +17,6 @@ def download_random_short(upload: bool = False, privacy: str = "public", delete:
     else:
         print(f"{Fore.RED} There are no more channels to download videos from, stopping script {Fore.RESET}")
         return
-
     shorts = downloader.get_channels_filtered_shorts(channel_url)
 
     short = random.choice(shorts)
