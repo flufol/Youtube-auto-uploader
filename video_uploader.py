@@ -21,7 +21,7 @@ init(autoreset=True)
 
 
 class YouTubeUploader:
-    def __init__(self, credentials_storage="youtube-oauth2.json"):
+    def __init__(self, credentials_storage="oauth.py-oauth2.json"):
         self.credentials_storage = credentials_storage
         self.youtube = self._authenticate()
 
@@ -36,7 +36,7 @@ class YouTubeUploader:
         credentials = storage.get()
 
         if credentials is None or credentials.invalid:
-            raise RuntimeError(Fore.RED + "OAuth credentials not found or invalid. Run the original script with args once to generate them." + Fore.RESET)
+            raise RuntimeError("OAuth credentials not found or invalid. Run the original script with args once to generate them.")
 
         return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
                          http=credentials.authorize(httplib2.Http()))

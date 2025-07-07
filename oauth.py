@@ -172,3 +172,13 @@ if __name__ == '__main__':
     initialize_upload(youtube, args)
   except HttpError as e:
     print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+
+
+"""
+python3 oauth.py --file="tmp/test_video_file.mp4"
+                      --title="Summer vacation in California"
+                       --description="Had fun surfing in Santa Cruz"
+                       --keywords="surfing,Santa Cruz"
+                       --category="22"
+                       --privacyStatus="private"
+"""
